@@ -1,37 +1,44 @@
 import './css/styles.css';
 import fetchCountries from './js/fetchCountries';
-import debounce from 'lodash.debounce';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import countryListTpl from './templates/country-list.hbs';
+import countryInfoTpl from './templates/country-info.hbs';
+import debounce from 'lodash.debounce';
 
 const DEBOUNCE_DELAY = 300;
 
-const inputEl = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
+const searchBox = document.querySelector('#search-box');
 
-inputEl.addEventListener('input', debounce(onUserRequest, DEBOUNCE_DELAY));
+searchBox.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
-function onUserRequest(e) {
-  const userRequest = e.target.value.trim();
+function onSearch(e) {
+  e.preventDefault();
+  const searchQery = e.target.value.trim();
+  countryList.innerHTML = '';
+  countryInfo.innerHTML = '';
 
-  fetchCountries(userRequest)
+  fetchCountries(searchQery)
     .then(response => {
-      console.log(response);
+      console.log(response.length);
+      if (response.length > 10) {
+        Notify.info('Too many matches found. Please enter a more specific name.');
+      }
+      if (response.length >= 2 && response.length <= 10) renderCountryList(response);
+      if (response.length === 1) {
+        renderCountryInfo(response);
+      }
     })
-    .catch(error => {
-      Notify.failure('Oops, there is no country with that name');
-    });
+    .catch(error => Notify.failure('Oops, there is no country with that name'));
 }
 
-//=======================================
+function renderCountryList(name) {
+  const countryListMarkup = countryListTpl(name);
+  countryList.innerHTML = countryListMarkup;
+}
 
-// fetch('https://restcountries.com/v2/name/CHINA')
-//   .then(response => {
-//     return response.json();
-//   })
-//   .then(name => {
-//     console.log(name);
-//   })
-//   .catch(error => {
-//     console.log(error);
-//   });
+function renderCountryInfo(name) {
+  const countryInfotMarkup = countryInfoTpl(name);
+  countryInfo.innerHTML = countryInfotMarkup;
+}

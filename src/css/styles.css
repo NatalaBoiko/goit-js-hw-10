@@ -33,19 +33,27 @@ body {
 }
 
 .country__list-name {
-  font-size: 30px;
+  font-size: 25px;
   font-weight: 700;
   margin: 0;
 }
 
 .country__name {
-  font-size: 30px;
+  font-size: 25px;
   font-weight: 700;
   margin: 0;
 }
-.country-info p {
+
+.country-info {
   margin: 0;
+  margin-left: 30px;
+  margin-top: 30px;
 }
+
+.country-info img {
+  margin-bottom: 20px;
+}
+
 .info__value {
   font-size: 20px;
   font-weight: 700;
